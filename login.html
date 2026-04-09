@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In | Healyis</title>
+  <meta name="description" content="Sign in or create a free Healyis account to access quizzes and track your learning." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230d4f6c'/><path d='M13 8h6v5h5v6h-5v5h-6v-5H8v-6h5z' fill='%2300c2d4'/></svg>" />
+  <style>
+    /* ── Auth page specific overrides ── */
+    html, body { height: 100%; }
+    body[data-page="auth"] { background: var(--bg); overflow: hidden; }
+    @media (max-width: 768px) { body[data-page="auth"] { overflow: auto; } }
+
+    /* Animated gradient blobs */
+    .auth-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: blobFloat 12s ease-in-out infinite;
+    }
+    .auth-blob-1 { width: 500px; height: 500px; background: radial-gradient(circle, #00c2d4, transparent); top: -150px; left: -100px; animation-delay: 0s; }
+    .auth-blob-2 { width: 400px; height: 400px; background: radial-gradient(circle, #6366f1, transparent); bottom: -80px; right: -80px; animation-delay: -4s; }
+    .auth-blob-3 { width: 300px; height: 300px; background: radial-gradient(circle, #0ea5e9, transparent); top: 40%; left: 30%; animation-delay: -8s; }
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(20px, -30px) scale(1.05); }
+      66% { transform: translate(-15px, 20px) scale(0.95); }
+    }
+
+    /* Grid overlay */
+    .auth-grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* Feature icons */
+    .feature-icon-wrap {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feature-icon-wrap svg { width: 22px; height: 22px; color: #fff; }
+
+    /* Stat dividers */
+    .auth-stat + .auth-stat { border-left: 1px solid rgba(255,255,255,.15); padding-left: 24px; }
+
+    /* Input icon button SVG */
+    .input-icon-btn svg { width: 18px; height: 18px; color: var(--text-muted); }
+
+    /* Spinner */
+    .spinner-ring {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Slide-in animations */
+    .auth-feature-item { animation: slideUp .5s cubic-bezier(0,0,.2,1) both; }
+    .auth-feature-item:nth-child(1) { animation-delay: .1s; }
+    .auth-feature-item:nth-child(2) { animation-delay: .2s; }
+    .auth-feature-item:nth-child(3) { animation-delay: .3s; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-form-inner { animation: fadeIn .4s ease both; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+
+    /* Demo box */
+    .auth-demo-box {
+      background: linear-gradient(135deg, rgba(13,79,108,.06), rgba(99,102,241,.06));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .auth-demo-title {
+      font-size: .7rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text-muted); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .auth-demo-title svg { width: 14px; height: 14px; }
+
+    /* Password strength bar */
+    .strength-bar-track {
+      height: 4px; background: var(--border); border-radius: 2px;
+      margin-top: 8px; overflow: hidden;
+    }
+    .strength-bar-fill {
+      height: 100%; border-radius: 2px;
+      transition: width .35s ease, background .35s ease;
+    }
+  </style>
+</head>
+<body data-page="auth">
+
+  <div class="auth-page">
+
+    <!-- ════════════════════════════════
+         LEFT — Visual panel
+    ════════════════════════════════ -->
+    <div class="auth-visual">
+      <!-- Animated background -->
+      <div class="auth-visual-bg"></div>
+      <div class="auth-grid-overlay"></div>
+      <div class="auth-blob auth-blob-1"></div>
+      <div class="auth-blob auth-blob-2"></div>
+      <div class="auth-blob auth-blob-3"></div>
+
+      <div class="auth-visual-inner">
+        <!-- Logo -->
+        <a href="index.html" class="auth-logo">
+          <div class="auth-logo-mark">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 4h6v5h5v6h-5v5H9v-5H4V9h5z" fill="#fff"/>
+            </svg>
+          </div>
+          <span>Heal<span style="color:var(--accent)">yis</span></span>
+        </a>
+
+        <!-- Headline -->
+        <div class="auth-visual-content">
+          <div class="auth-visual-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:5px"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Trusted Medical Education
+          </div>
+          <h2 class="auth-visual-headline">Learn medicine<br/>the right way.</h2>
+          <p class="auth-visual-sub">Evidence-based knowledge written by clinicians, designed for everyone.</p>
+
+          <div class="auth-features">
+            <div class="auth-feature-item">
+              <div class="feature-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                  <path d="M9.663 17h4.673M12 3a7 7 0 017 7c0 2.55-1.36 4.77-3.38 5.99L15 17H9l-.62-2.01C6.36 13.77 5 11.55 5 10a7 7 0 017-7z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="auth-feature-title">Interactive Quizzes</div>
+                <div class="auth-feature-desc">Clinician-written MCQs with instant explanations</div>
+              </div>
+            </div>
+            <div class="auth-feature-item">
+              <div class="feature-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                  <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+              </div>
+              <div>
+                <div class="auth-feature-title">Daily Deep Dives</div>
+                <div class="auth-feature-desc">New disease articles every day from specialist doctors</div>
+              </div>
+            </div>
+            <div class="auth-feature-item">
+              <div class="feature-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                  <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="auth-feature-title">Track Progress</div>
+                <div class="auth-feature-desc">Your quiz scores and personal bests, saved automatically</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="auth-visual-stats">
+          <div class="auth-stat">
+            <div class="auth-stat-num">6+</div>
+            <div class="auth-stat-label">Articles</div>
+          </div>
+          <div class="auth-stat">
+            <div class="auth-stat-num">30+</div>
+            <div class="auth-stat-label">Questions</div>
+          </div>
+          <div class="auth-stat">
+            <div class="auth-stat-num">44</div>
+            <div class="auth-stat-label">Glossary Terms</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         RIGHT — Form panel
+    ════════════════════════════════ -->
+    <div class="auth-form-panel">
+      <div class="auth-form-inner">
+
+        <!-- Mobile logo -->
+        <a href="index.html" class="auth-logo-mobile">
+          <div class="auth-logo-mark" style="width:28px;height:28px;border-radius:8px">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px">
+              <path d="M9 4h6v5h5v6h-5v5H9v-5H4V9h5z" fill="#fff"/>
+            </svg>
+          </div>
+          Heal<span style="color:var(--accent)">yis</span>
+        </a>
+
+        <!-- Tabs -->
+        <div class="auth-tabs" id="authTabs">
+          <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+          <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Create Account</button>
+        </div>
+
+        <!-- ── Login Form ── -->
+        <div id="loginForm">
+          <div class="auth-form-header">
+            <h1 class="auth-form-title">Welcome back</h1>
+            <p class="auth-form-subtitle">Sign in to access quizzes and your saved content.</p>
+          </div>
+
+          <form onsubmit="handleLogin(event)" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="loginEmail">Email address</label>
+              <div class="input-field-wrap">
+                <span class="input-prefix-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                </span>
+                <input class="form-input has-prefix" type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="loginPassword">Password</label>
+              <div class="input-field-wrap">
+                <span class="input-prefix-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                  </svg>
+                </span>
+                <input class="form-input has-prefix has-suffix" type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required />
+                <button type="button" class="input-icon-btn" id="loginPasswordToggle" onclick="togglePassword('loginPassword', this)" aria-label="Show password">
+                  <svg id="eyeIcon1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div id="loginError" class="form-error-msg hidden"></div>
+            <button type="submit" class="btn btn-primary btn-full btn-lg" id="loginBtn" style="margin-top:8px">
+              <span class="btn-label">Sign In</span>
+              <span class="btn-spinner hidden"><span class="spinner-ring"></span></span>
+            </button>
+          </form>
+
+          <div class="auth-divider"><span>or continue with demo</span></div>
+
+          <div class="auth-demo-box">
+            <div class="auth-demo-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              Demo credentials
+            </div>
+            <div class="auth-demo-row">
+              <div>
+                <div class="auth-demo-role">Admin account</div>
+                <div class="auth-demo-value">admin@healyis.com &nbsp;·&nbsp; admin123</div>
+              </div>
+              <button class="btn btn-sm btn-outline" onclick="fillDemo('admin@healyis.com','admin123')">Fill</button>
+            </div>
+          </div>
+
+          <p class="auth-switch">Don't have an account? <a onclick="switchTab('register')" href="#" class="auth-switch-link">Create one free</a></p>
+        </div>
+
+        <!-- ── Register Form ── -->
+        <div id="registerForm" class="hidden">
+          <div class="auth-form-header">
+            <h1 class="auth-form-title">Create account</h1>
+            <p class="auth-form-subtitle">Free forever. No credit card required.</p>
+          </div>
+
+          <form onsubmit="handleRegister(event)" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="regName">Full name</label>
+              <div class="input-field-wrap">
+                <span class="input-prefix-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </span>
+                <input class="form-input has-prefix" type="text" id="regName" placeholder="Jane Smith" autocomplete="name" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regEmail">Email address</label>
+              <div class="input-field-wrap">
+                <span class="input-prefix-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                </span>
+                <input class="form-input has-prefix" type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regPassword">Password</label>
+              <div class="input-field-wrap">
+                <span class="input-prefix-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                  </svg>
+                </span>
+                <input class="form-input has-prefix has-suffix" type="password" id="regPassword" placeholder="Min. 6 characters" autocomplete="new-password" required minlength="6" />
+                <button type="button" class="input-icon-btn" onclick="togglePassword('regPassword', this)" aria-label="Show password">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              <div id="passwordStrength" style="margin-top:8px"></div>
+            </div>
+            <div id="registerError" class="form-error-msg hidden"></div>
+            <button type="submit" class="btn btn-primary btn-full btn-lg" id="registerBtn" style="margin-top:8px">
+              <span class="btn-label">Create Account</span>
+              <span class="btn-spinner hidden"><span class="spinner-ring"></span></span>
+            </button>
+          </form>
+
+          <p class="auth-terms">By creating an account you agree to our <a href="about.html">Terms &amp; Privacy Policy</a>.</p>
+          <p class="auth-switch">Already have an account? <a onclick="switchTab('login')" href="#" class="auth-switch-link">Sign in</a></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (Auth.isLoggedIn()) window.location.href = 'index.html';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('tab') === 'register') switchTab('register');
+
+    function switchTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('loginForm').classList.toggle('hidden', !isLogin);
+      document.getElementById('registerForm').classList.toggle('hidden', isLogin);
+      document.getElementById('tabLogin').classList.toggle('active', isLogin);
+      document.getElementById('tabRegister').classList.toggle('active', !isLogin);
+    }
+
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.querySelector('svg').innerHTML = isHidden
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    }
+
+    function fillDemo(email, password) {
+      document.getElementById('loginEmail').value    = email;
+      document.getElementById('loginPassword').value = password;
+      switchTab('login');
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+
+    function clearError(id) {
+      const el = document.getElementById(id);
+      el.textContent = '';
+      el.classList.add('hidden');
+    }
+
+    function setLoading(btnId, loading) {
+      const btn = document.getElementById(btnId);
+      btn.disabled = loading;
+      btn.querySelector('.btn-label').classList.toggle('hidden', loading);
+      btn.querySelector('.btn-spinner').classList.toggle('hidden', !loading);
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      clearError('loginError');
+      setLoading('loginBtn', true);
+      await new Promise(r => setTimeout(r, 500));
+      const result = Auth.login({
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPassword').value
+      });
+      if (result.ok) {
+        const next = urlParams.get('next');
+        window.location.href = next ? decodeURIComponent(next) : 'index.html';
+      } else {
+        showError('loginError', result.error);
+        setLoading('loginBtn', false);
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      clearError('registerError');
+      setLoading('registerBtn', true);
+      await new Promise(r => setTimeout(r, 500));
+      const result = Auth.register({
+        name:     document.getElementById('regName').value,
+        email:    document.getElementById('regEmail').value,
+        password: document.getElementById('regPassword').value
+      });
+      if (result.ok) {
+        const next = urlParams.get('next');
+        window.location.href = next ? decodeURIComponent(next) : 'quiz-hub.html';
+      } else {
+        showError('registerError', result.error);
+        setLoading('registerBtn', false);
+      }
+    }
+
+    /* Password strength */
+    document.getElementById('regPassword')?.addEventListener('input', function() {
+      const val = this.value;
+      const el  = document.getElementById('passwordStrength');
+      if (!val) { el.innerHTML = ''; return; }
+      let s = 0;
+      if (val.length >= 6)  s++;
+      if (val.length >= 10) s++;
+      if (/[A-Z]/.test(val)) s++;
+      if (/[0-9]/.test(val)) s++;
+      if (/[^A-Za-z0-9]/.test(val)) s++;
+      const labels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Very strong'];
+      const colors = ['', '#ef4444', '#f97316', '#eab308', '#22c55e', '#10b981'];
+      el.innerHTML = `
+        <div class="strength-bar-track">
+          <div class="strength-bar-fill" style="width:${(s/5)*100}%;background:${colors[s]}"></div>
+        </div>
+        <span style="font-size:.72rem;color:${colors[s]};font-weight:600;margin-top:3px;display:block">${labels[s]}</span>
+      `;
+    });
+  </script>
+</body>
+</html>

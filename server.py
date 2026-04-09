@@ -37,13 +37,9 @@ if __name__ == "__main__":
     os.chdir(DIRECTORY)
 
     print()
-    print("  ╔══════════════════════════════════════════╗")
-    print("  ║           Healyis Local Server           ║")
-    print("  ╠══════════════════════════════════════════╣")
-    print(f"  ║  🌐  http://localhost:{PORT}               ║")
-    print(f"  ║  📂  Serving: {DIRECTORY[:28]}...  ║")
-    print("  ║  🛑  Press Ctrl+C to stop               ║")
-    print("  ╚══════════════════════════════════════════╝")
+    print("  Healyis Local Server")
+    print(f"  http://localhost:{PORT}")
+    print("  Press Ctrl+C to stop")
     print()
 
     threading.Thread(target=open_browser, daemon=True).start()

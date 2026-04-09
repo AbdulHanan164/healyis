@@ -55,10 +55,10 @@ const QuizEngine = (() => {
     function showResults() {
       const pct = Math.round((score / quizData.questions.length) * 100);
       let grade, msg, subMsg;
-      if (pct >= 80) { grade = 'excellent'; msg = '🏆 Excellent!';    subMsg = 'You have a strong understanding of this topic.'; }
-      else if (pct >= 60) { grade = 'good'; msg = '👍 Good Work!';   subMsg = 'Solid knowledge — review the explanations to fill in the gaps.'; }
-      else if (pct >= 40) { grade = 'ok';   msg = '📚 Keep Learning'; subMsg = "You're on your way — re-read the article and try again!"; }
-      else { grade = 'poor'; msg = '💪 Keep Practising'; subMsg = 'This is a tough topic. Read the article again and retake the quiz!'; }
+      if (pct >= 80) { grade = 'excellent'; msg = 'Excellent!';     subMsg = 'You have a strong understanding of this topic.'; }
+      else if (pct >= 60) { grade = 'good'; msg = 'Good Work!';    subMsg = 'Solid knowledge — review the explanations to fill in the gaps.'; }
+      else if (pct >= 40) { grade = 'ok';   msg = 'Keep Learning'; subMsg = "You're on your way — re-read the article and try again!"; }
+      else { grade = 'poor'; msg = 'Keep Practising'; subMsg = 'This is a tough topic. Read the article again and retake the quiz!'; }
 
       // Save best score
       const scores  = JSON.parse(localStorage.getItem('healyis_quiz_scores') || '{}');
@@ -78,8 +78,8 @@ const QuizEngine = (() => {
             <div class="score-msg">${msg}</div>
             <div class="score-submsg">${subMsg}</div>
             <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-              <button class="btn btn-primary btn-sm" onclick="QuizEngine._restart('${containerId}')">🔄 Retake Quiz</button>
-              <a href="quiz-hub.html" class="btn btn-outline btn-sm">📚 All Quizzes</a>
+              <button class="btn btn-primary btn-sm" onclick="QuizEngine._restart('${containerId}')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-1px;margin-right:5px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>Retake Quiz</button>
+              <a href="quiz-hub.html" class="btn btn-outline btn-sm"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-1px;margin-right:5px"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>All Quizzes</a>
             </div>
           </div>
         </div>`;
@@ -117,7 +117,7 @@ const QuizEngine = (() => {
     if (feedback) {
       feedback.className = `quiz-feedback ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
       feedback.innerHTML = `
-        <strong>${isCorrect ? '✅ Correct!' : `❌ Not quite. The correct answer was: <em>${q.options[correctIdx]}</em>`}</strong>
+        <strong>${isCorrect ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px"><polyline points="20 6 9 17 4 12"/></svg>Correct!' : `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Not quite. The correct answer was: <em>${q.options[correctIdx]}</em>`}</strong>
         <br><span style="margin-top:6px;display:block">${q.explanation}</span>`;
     }
 

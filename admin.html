@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel | Healyis</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d4f6c'/%3E%3Cpath d='M13 8h6v5h5v6h-5v5h-6v-5H8v-6h5z' fill='%2300c2d4'/%3E%3C/svg%3E" />
+</head>
+<body data-page="admin">
+
+<div class="admin-layout">
+
+  <!-- ── Sidebar ── -->
+  <aside class="admin-sidebar">
+    <a href="index.html" class="admin-sidebar-logo">
+      <div class="logo-mark" style="width:32px;height:32px;border-radius:9px;animation:none"><svg viewBox="0 0 24 24" fill="none"><path d="M9 4h6v5h5v6h-5v5H9v-5H4V9h5z" fill="currentColor"/></svg></div>
+      <span>Heal<span style="color:var(--accent)">yis</span></span>
+    </a>
+
+    <nav class="admin-nav">
+      <div class="admin-nav-label">Main</div>
+      <a href="#" class="sidebar-link active" data-panel="dashboard">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> Dashboard
+      </a>
+      <a href="#" class="sidebar-link" data-panel="posts">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> Blog Posts
+      </a>
+      <a href="#" class="sidebar-link" data-panel="quizzes">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span> Quizzes
+      </a>
+      <div class="admin-nav-label" style="margin-top:16px">Users</div>
+      <a href="#" class="sidebar-link" data-panel="users">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span> All Users
+      </a>
+      <div class="admin-nav-divider"></div>
+      <a href="index.html" class="sidebar-link">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> View Site
+      </a>
+      <button class="sidebar-link sidebar-logout" onclick="Auth.logout()">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> Log out
+      </button>
+    </nav>
+  </aside>
+
+  <!-- ── Main content ── -->
+  <main class="admin-main">
+
+    <!-- Top bar -->
+    <div class="admin-topbar">
+      <div class="admin-topbar-left">
+        <h2 class="admin-page-title" id="adminPageTitle">Dashboard</h2>
+      </div>
+      <div class="admin-topbar-right" id="adminTopbarActions"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL: Dashboard
+    ══════════════════════════════════════ -->
+    <div id="panel-dashboard" class="admin-panel">
+
+      <!-- Stats row -->
+      <div class="admin-stats">
+        <div class="admin-stat-card" style="--stat-color:#0d4f6c">
+          <div class="stat-icon-wrap" style="--c:#0d4f6c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <div class="stat-body">
+            <div class="stat-num" id="stat-posts">—</div>
+            <div class="stat-label">Total Posts</div>
+          </div>
+        </div>
+        <div class="admin-stat-card" style="--stat-color:#6366f1">
+          <div class="stat-icon-wrap" style="--c:#6366f1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+          <div class="stat-body">
+            <div class="stat-num" id="stat-quizzes">—</div>
+            <div class="stat-label">Quizzes</div>
+          </div>
+        </div>
+        <div class="admin-stat-card" style="--stat-color:#00c2d4">
+          <div class="stat-icon-wrap" style="--c:#00c2d4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+          <div class="stat-body">
+            <div class="stat-num" id="stat-users">—</div>
+            <div class="stat-label">Registered Users</div>
+          </div>
+        </div>
+        <div class="admin-stat-card" style="--stat-color:#f72585">
+          <div class="stat-icon-wrap" style="--c:#f72585"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="stat-body">
+            <div class="stat-num" id="stat-attempts">—</div>
+            <div class="stat-label">Quiz Attempts</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="admin-grid-2">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3>Recent Posts</h3>
+            <button class="btn btn-sm btn-outline" onclick="Admin.showPanel('posts')">View all</button>
+          </div>
+          <div id="recentPostsList" class="recent-list">
+            <p style="color:var(--text-muted)">Loading…</p>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3>Quick Actions</h3>
+          </div>
+          <div style="display:grid;gap:10px">
+            <button class="admin-quick-action" onclick="Admin.showPanel('posts');Admin.openPostEditor()">
+              <div class="qa-icon" style="--c:#0d4f6c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+              <div>
+                <div style="font-weight:600;font-size:.88rem">New Blog Post</div>
+                <div style="font-size:.76rem;color:var(--text-muted)">Write and publish a new article</div>
+              </div>
+            </button>
+            <button class="admin-quick-action" onclick="Admin.showPanel('quizzes');Admin.openQuizEditor()">
+              <div class="qa-icon" style="--c:#6366f1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div>
+                <div style="font-weight:600;font-size:.88rem">New Quiz</div>
+                <div style="font-size:.76rem;color:var(--text-muted)">Build an interactive quiz</div>
+              </div>
+            </button>
+            <button class="admin-quick-action" onclick="Admin.showPanel('users')">
+              <div class="qa-icon" style="--c:#00c2d4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+              <div>
+                <div style="font-weight:600;font-size:.88rem">Manage Users</div>
+                <div style="font-size:.76rem;color:var(--text-muted)">View and remove accounts</div>
+              </div>
+            </button>
+            <a href="index.html" class="admin-quick-action" style="text-decoration:none;color:inherit">
+              <div class="qa-icon" style="--c:#10b981"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+              <div>
+                <div style="font-weight:600;font-size:.88rem">View Live Site</div>
+                <div style="font-size:.76rem;color:var(--text-muted)">See how the site looks publicly</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL: Posts
+    ══════════════════════════════════════ -->
+    <div id="panel-posts" class="admin-panel hidden">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3>All Blog Posts</h3>
+          <button class="btn btn-primary btn-sm" onclick="Admin.openPostEditor()">+ New Post</button>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width:48px"></th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Author</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="postsTableBody">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL: Quizzes
+    ══════════════════════════════════════ -->
+    <div id="panel-quizzes" class="admin-panel hidden">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3>All Quizzes</h3>
+          <button class="btn btn-primary btn-sm" onclick="Admin.openQuizEditor()">+ New Quiz</button>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Questions</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="quizzesTableBody">
+              <tr><td colspan="3" style="text-align:center;color:var(--text-muted)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL: Users
+    ══════════════════════════════════════ -->
+    <div id="panel-users" class="admin-panel hidden">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3>Registered Users</h3>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL: Post Editor
+══════════════════════════════════════ -->
+<div id="postEditorModal" class="modal-backdrop hidden">
+  <div class="modal-box modal-lg">
+    <div class="modal-header">
+      <h3 id="postEditorModalTitle">New Post</h3>
+      <button class="modal-close" onclick="Admin.closePostEditor()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="postEditorForm" onsubmit="return false">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Title *</label>
+            <input class="form-input" type="text" id="postEditorTitle" placeholder="e.g. Understanding Type 2 Diabetes" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-input" id="postEditorCategory">
+              <option>Cardiology</option>
+              <option>Neurology</option>
+              <option>Pulmonology</option>
+              <option>Endocrinology</option>
+              <option>General</option>
+              <option>Oncology</option>
+              <option>Gastroenterology</option>
+              <option>Dermatology</option>
+              <option>Psychiatry</option>
+              <option>Infectious Disease</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Author</label>
+            <input class="form-input" type="text" id="postEditorAuthor" placeholder="e.g. Dr. Sarah Mitchell" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tags (comma-separated)</label>
+            <input class="form-input" type="text" id="postEditorTags" placeholder="diabetes, insulin, metabolism" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hero Icon (emoji)</label>
+            <input class="form-input" type="text" id="postEditorIcon" placeholder="📄" maxlength="4" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hero Colour</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="color" id="postEditorColor" value="#0d4f6c" style="width:44px;height:38px;border:none;border-radius:var(--radius);cursor:pointer;padding:2px" />
+              <span style="font-size:.8rem;color:var(--text-muted)">Card accent colour</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Excerpt (shown in post cards)</label>
+          <textarea class="form-input" id="postEditorExcerpt" rows="2" placeholder="A short description shown on the homepage card…"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Content * <span style="font-size:.75rem;color:var(--text-muted);font-weight:400">(HTML supported)</span></label>
+          <textarea class="form-input" id="postEditorContent" rows="14" placeholder="Write your article content here. HTML is supported — use &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;strong&gt; etc." style="font-family:monospace;font-size:.85rem"></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="Admin.closePostEditor()">Cancel</button>
+      <button class="btn btn-primary" onclick="Admin.savePost()">Save Post</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL: Quiz Editor
+══════════════════════════════════════ -->
+<div id="quizEditorModal" class="modal-backdrop hidden">
+  <div class="modal-box modal-lg">
+    <div class="modal-header">
+      <h3 id="quizEditorModalTitle">New Quiz</h3>
+      <button class="modal-close" onclick="Admin.closeQuizEditor()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="quizEditorForm" onsubmit="return false">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Quiz Title *</label>
+            <input class="form-input" type="text" id="quizEditorTitle" placeholder="e.g. Diabetes Knowledge Check" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Linked Post ID <span style="font-size:.75rem;color:var(--text-muted)">(optional)</span></label>
+            <input class="form-input" type="text" id="quizEditorPostId" placeholder="e.g. custom-1234567890" />
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px">
+          <h4 style="margin:0;font-size:.95rem">Questions</h4>
+          <button type="button" class="btn btn-sm btn-outline" onclick="Admin.addQuestion()">+ Add Question</button>
+        </div>
+
+        <div id="quizQuestionsContainer" style="display:grid;gap:16px;max-height:460px;overflow-y:auto;padding-right:4px">
+          <p style="color:var(--text-muted);text-align:center;padding:20px">No questions yet. Add one above.</p>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="Admin.closeQuizEditor()">Cancel</button>
+      <button class="btn btn-primary" onclick="Admin.saveQuiz()">Save Quiz</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

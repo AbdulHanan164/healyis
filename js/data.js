@@ -14,7 +14,7 @@ const POSTS = [
     readTime: "9 min",
     featured: true,
     heroColor: "linear-gradient(135deg,#0d4f6c 0%,#00b4d8 100%)",
-    heroIcon: "❤️",
+    heroIcon: `<svg viewBox="0 0 24 24" fill="rgba(255,255,255,.9)" xmlns="http://www.w3.org/2000/svg"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`,
     quickFacts: {
       symptoms: ["Often no symptoms (silent)", "Severe headaches", "Dizziness", "Blurred vision", "Chest pain", "Shortness of breath"],
       riskFactors: ["Obesity / overweight", "High-sodium diet", "Physical inactivity", "Heavy alcohol use", "Family history", "Chronic stress", "Age > 55", "Smoking"],
@@ -100,7 +100,7 @@ const POSTS = [
     readTime: "10 min",
     featured: false,
     heroColor: "linear-gradient(135deg,#7b2d8b 0%,#c77dff 100%)",
-    heroIcon: "🩸",
+    heroIcon: `<svg viewBox="0 0 24 24" fill="rgba(255,255,255,.9)" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.5 10 4 14.5 4 17a8 8 0 0016 0c0-2.5-2.5-7-8-15z"/></svg>`,
     quickFacts: {
       symptoms: ["Frequent urination", "Excessive thirst", "Fatigue", "Blurred vision", "Slow-healing wounds", "Recurring infections", "Numbness in hands/feet"],
       riskFactors: ["Overweight / obesity", "Physical inactivity", "Pre-diabetes", "Family history", "Age > 45", "Gestational diabetes history", "Polycystic ovary syndrome"],
@@ -177,7 +177,7 @@ const POSTS = [
     readTime: "8 min",
     featured: false,
     heroColor: "linear-gradient(135deg,#0a7c5c 0%,#52b788 100%)",
-    heroIcon: "🫁",
+    heroIcon: `<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M9.59 4.59A2 2 0 1111 8H2"/><path d="M10.73 19.41A2 2 0 1012.73 16H2"/><path d="M15.73 8.27A2.5 2.5 0 1117.5 12H2"/></svg>`,
     quickFacts: {
       symptoms: ["Wheezing", "Shortness of breath", "Chest tightness", "Chronic cough (especially at night)", "Exercise-induced breathlessness"],
       riskFactors: ["Allergies / atopy", "Family history", "Respiratory infections in childhood", "Air pollution exposure", "Occupational irritants", "Obesity", "Smoking"],
@@ -253,7 +253,7 @@ const POSTS = [
     readTime: "11 min",
     featured: false,
     heroColor: "linear-gradient(135deg,#3a0ca3 0%,#7209b7 100%)",
-    heroIcon: "🧠",
+    heroIcon: `<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
     quickFacts: {
       symptoms: ["Resting tremor (pill-rolling)", "Bradykinesia (slow movement)", "Muscle rigidity", "Postural instability", "Micrographia (small handwriting)", "Masked face (reduced expression)", "Sleep disturbances", "Depression / anxiety"],
       riskFactors: ["Age > 60", "Male sex", "Family history / LRRK2 gene variants", "Pesticide exposure", "Head trauma", "Well-water consumption (manganese)"],
@@ -319,7 +319,7 @@ const POSTS = [
     readTime: "8 min",
     featured: false,
     heroColor: "linear-gradient(135deg,#b5179e 0%,#f72585 100%)",
-    heroIcon: "⚡",
+    heroIcon: `<svg viewBox="0 0 24 24" fill="rgba(255,255,255,.9)" xmlns="http://www.w3.org/2000/svg"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
     quickFacts: {
       symptoms: ["Unilateral throbbing headache", "Nausea / vomiting", "Photophobia (light sensitivity)", "Phonophobia (sound sensitivity)", "Aura (visual zigzags, numbness)", "Cognitive fog ('migraine brain')", "Neck stiffness"],
       riskFactors: ["Female sex (3× more common)", "Family history", "Hormonal changes (menstruation, OCP)", "Sleep disruption", "Stress", "Certain foods/drinks (alcohol, caffeine withdrawal)", "Strong sensory stimuli"],
@@ -390,7 +390,7 @@ const POSTS = [
     readTime: "7 min",
     featured: false,
     heroColor: "linear-gradient(135deg,#e07000 0%,#f4a261 100%)",
-    heroIcon: "🫧",
+    heroIcon: `<svg viewBox="0 0 24 24" fill="rgba(255,255,255,.9)" xmlns="http://www.w3.org/2000/svg"><path d="M17.5 19H9a7 7 0 110-14 7 7 0 0112.55 2A5.5 5.5 0 0117.5 19z"/></svg>`,
     quickFacts: {
       symptoms: ["Productive cough (rusty sputum)", "Fever and chills", "Chest pain (pleuritic — sharp, worsened by breathing)", "Shortness of breath", "Fatigue", "Confusion (especially in elderly)"],
       riskFactors: ["Age > 65 or < 2", "Smoking", "COPD or asthma", "Immunosuppression (HIV, chemotherapy)", "Diabetes", "Heart failure", "Alcoholism", "Recent viral respiratory infection"],
@@ -734,7 +734,8 @@ const RESOURCES = [
     description: "A printable guide covering daily BP monitoring targets, medication schedule, dietary limits, and when to seek emergency care.",
     category: "Cardiology",
     type: "Checklist",
-    icon: "❤️",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`,
+    color: "#0d4f6c",
     pages: 2
   },
   {
@@ -743,7 +744,8 @@ const RESOURCES = [
     description: "Daily log for fasting glucose, post-meal readings, HbA1c targets, medication doses, and dietary notes.",
     category: "Endocrinology",
     type: "Log Sheet",
-    icon: "🩸",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 2C6.5 10 4 14.5 4 17a8 8 0 0016 0c0-2.5-2.5-7-8-15z"/></svg>`,
+    color: "#7b2d8b",
     pages: 4
   },
   {
@@ -752,7 +754,8 @@ const RESOURCES = [
     description: "Colour-coded (Green/Yellow/Red zone) action plan with trigger list and emergency contacts — bring to your GP to personalise.",
     category: "Pulmonology",
     type: "Action Plan",
-    icon: "🫁",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M9.59 4.59A2 2 0 1111 8H2"/><path d="M10.73 19.41A2 2 0 1012.73 16H2"/><path d="M15.73 8.27A2.5 2.5 0 1117.5 12H2"/></svg>`,
+    color: "#0a7c5c",
     pages: 1
   },
   {
@@ -761,7 +764,8 @@ const RESOURCES = [
     description: "Track attack frequency, duration, severity, triggers, medications taken, and their effectiveness — essential data for your neurologist.",
     category: "Neurology",
     type: "Diary",
-    icon: "⚡",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>`,
+    color: "#b5179e",
     pages: 8
   },
   {
@@ -770,7 +774,8 @@ const RESOURCES = [
     description: "A printable pocket reference of 40+ medical terms from the Healyis glossary, ideal for patients attending specialist appointments.",
     category: "General",
     type: "Reference",
-    icon: "📚",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>`,
+    color: "#10b981",
     pages: 6
   },
   {
@@ -779,7 +784,8 @@ const RESOURCES = [
     description: "Evidence-based immunization schedule for adults, including flu, pneumococcal, shingles, and COVID-19 boosters, with age-based recommendations.",
     category: "General",
     type: "Schedule",
-    icon: "💉",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>`,
+    color: "#f72585",
     pages: 2
   }
 ];

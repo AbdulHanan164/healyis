@@ -8,6 +8,19 @@ const App = (() => {
   let bookmarks = JSON.parse(localStorage.getItem('healyis_bookmarks') || '[]');
   let searchTimeout = null;
 
+  // ── Merge custom posts & quizzes from Admin ─
+  function getAllPosts() {
+    const custom = JSON.parse(localStorage.getItem('healyis_custom_posts') || '[]');
+    return [...custom, ...POSTS];
+  }
+
+  function getAllQuizzes() {
+    const custom = JSON.parse(localStorage.getItem('healyis_custom_quizzes') || '[]');
+    const merged = { ...QUIZZES };
+    custom.forEach(q => { merged[q.id] = q; });
+    return merged;
+  }
+
   // ── Toast Notifications ─────────────────────
   function toast(message, type = 'info', duration = 3000) {
     let container = document.querySelector('.toast-container');
@@ -18,8 +31,12 @@ const App = (() => {
     }
     const t = document.createElement('div');
     t.className = `toast ${type}`;
-    const icons = { success: '✅', info: 'ℹ️', warning: '⚠️' };
-    t.innerHTML = `<span>${icons[type] || 'ℹ️'}</span> ${message}`;
+    const icons = {
+      success: `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+      info:    `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+      warning: `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`
+    };
+    t.innerHTML = `<span style="display:flex;align-items:center">${icons[type] || icons.info}</span> ${message}`;
     container.appendChild(t);
     setTimeout(() => {
       t.classList.add('out');
@@ -32,12 +49,10 @@ const App = (() => {
     const idx = bookmarks.indexOf(postId);
     if (idx === -1) {
       bookmarks.push(postId);
-      btn.textContent = '🔖';
       btn.classList.add('active');
       toast('Saved to bookmarks!', 'success');
     } else {
       bookmarks.splice(idx, 1);
-      btn.textContent = '🔖';
       btn.classList.remove('active');
       toast('Removed from bookmarks');
     }
@@ -65,18 +80,18 @@ const App = (() => {
     return `
       <article class="post-card${featured ? ' featured' : ''} fade-up" onclick="App.openPost('${post.id}')">
         <div class="card-hero" style="background:${post.heroColor}">
-          <span style="position:relative;z-index:1">${post.heroIcon}</span>
+          <div class="card-hero-icon">${post.heroIcon}</div>
           <span class="card-category-badge">${post.category}</span>
-          ${featured ? '<span class="featured-badge">⭐ Featured</span>' : ''}
+          ${featured ? '<span class="featured-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Featured</span>' : ''}
           <button class="bookmark-btn ${isBookmarked ? 'active' : ''}"
             data-post-id="${post.id}"
             onclick="event.stopPropagation(); App.handleBookmark('${post.id}', this)"
-            title="${isBookmarked ? 'Saved' : 'Save for later'}">🔖</button>
+            title="${isBookmarked ? 'Saved' : 'Save for later'}"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></button>
         </div>
         <div class="card-body">
           <div class="card-meta">
-            <span>📅 ${formatDate(post.date)}</span>
-            <span>⏱ ${post.readTime} read</span>
+            <span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-1px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${formatDate(post.date)}</span>
+            <span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-1px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${post.readTime} read</span>
           </div>
           <h2 class="card-title">${post.title}</h2>
           <p class="card-subtitle">${post.subtitle}</p>
@@ -96,9 +111,10 @@ const App = (() => {
     const grid = document.getElementById('postsGrid');
     if (!grid) return;
 
+    const allPosts = getAllPosts();
     let filtered = filter === 'All'
-      ? POSTS
-      : POSTS.filter(p => p.category === filter);
+      ? allPosts
+      : allPosts.filter(p => p.category === filter);
 
     if (!filtered.length) {
       grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
@@ -118,7 +134,7 @@ const App = (() => {
     const bar = document.getElementById('filterBar');
     if (!bar) return;
 
-    const categories = ['All', ...new Set(POSTS.map(p => p.category))];
+    const categories = ['All', ...new Set(getAllPosts().map(p => p.category))];
     bar.innerHTML = categories.map(c =>
       `<button class="filter-btn ${c === 'All' ? 'active' : ''}"
         onclick="App.setFilter('${c}', this)">${c}</button>`
@@ -139,7 +155,7 @@ const App = (() => {
   // ── Render Single Post (post.html) ───────────
   function renderPost() {
     const postId = window.location.hash.slice(1);
-    const post = POSTS.find(p => p.id === postId);
+    const post = getAllPosts().find(p => p.id === postId);
     const container = document.getElementById('postContainer');
     if (!container) return;
 
@@ -164,7 +180,7 @@ const App = (() => {
           <!-- Main Content -->
           <main>
             <div class="post-hero" style="background:${post.heroColor}">
-              <span style="font-size:5rem">${post.heroIcon}</span>
+              <div class="post-hero-icon">${post.heroIcon}</div>
             </div>
 
             <div class="post-header">
@@ -185,19 +201,19 @@ const App = (() => {
                 </div>
               </div>
               <span class="meta-divider">|</span>
-              <span class="meta-item">📅 ${formatDate(post.date)}</span>
-              <span class="meta-item">⏱ ${post.readTime} read</span>
+              <span class="meta-item"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${formatDate(post.date)}</span>
+              <span class="meta-item"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${post.readTime} read</span>
               <div class="post-actions-bar">
                 <button class="btn btn-ghost btn-sm bookmark-btn ${isBookmarked ? 'active' : ''}"
                   data-post-id="${post.id}"
                   onclick="App.handleBookmark('${post.id}', this)">
-                  🔖 ${isBookmarked ? 'Saved' : 'Save'}
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-2px;margin-right:4px"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>${isBookmarked ? 'Saved' : 'Save'}
                 </button>
               </div>
             </div>
 
             <div class="medical-disclaimer">
-              <span class="disclaimer-icon">⚕️</span>
+              <span class="disclaimer-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 4h6v5h5v6h-5v5H9v-5H4V9h5z"/></svg></span>
               <span><strong>Educational Content Only.</strong> This article is for informational purposes and does not constitute medical advice. Always consult a qualified healthcare professional for diagnosis and treatment.</span>
             </div>
 
@@ -255,32 +271,29 @@ const App = (() => {
 
             <!-- Related Posts -->
             <div class="sidebar-card">
-              <h3>📖 Related Articles</h3>
-              ${POSTS.filter(p => p.id !== post.id && p.category === post.category).slice(0,2)
-                .map(p => `
+              <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px;margin-right:6px"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Related Articles</h3>
+              ${(() => {
+                const ap = getAllPosts();
+                const related = ap.filter(p => p.id !== post.id && p.category === post.category).slice(0,2);
+                const fallback = ap.filter(p => p.id !== post.id).slice(0,2);
+                return (related.length ? related : fallback).map(p => `
                   <div onclick="App.openPost('${p.id}')" style="cursor:pointer;padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center">
-                    <div style="width:40px;height:40px;border-radius:10px;background:${p.heroColor};display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">${p.heroIcon}</div>
+                    <div style="width:40px;height:40px;border-radius:10px;background:${p.heroColor || '#0d4f6c'};display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:8px;box-sizing:border-box">${p.heroIcon || '<svg viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2"/></svg>'}</div>
                     <div>
                       <div style="font-size:.85rem;font-weight:600;color:var(--text);line-height:1.3">${p.title}</div>
-                      <div style="font-size:.75rem;color:var(--text-muted)">${p.readTime} read</div>
+                      <div style="font-size:.75rem;color:var(--text-muted)">${p.readTime || ''} read</div>
                     </div>
-                  </div>`).join('') ||
-                POSTS.filter(p => p.id !== post.id).slice(0,2).map(p => `
-                  <div onclick="App.openPost('${p.id}')" style="cursor:pointer;padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center">
-                    <div style="width:40px;height:40px;border-radius:10px;background:${p.heroColor};display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">${p.heroIcon}</div>
-                    <div>
-                      <div style="font-size:.85rem;font-weight:600;color:var(--text);line-height:1.3">${p.title}</div>
-                      <div style="font-size:.75rem;color:var(--text-muted)">${p.readTime} read</div>
-                    </div>
-                  </div>`).join('')}
+                  </div>`).join('');
+              })()}
             </div>
           </aside>
         </div>
       </div>`;
 
     // Mount quiz into sidebar
-    if (post.quizId && QUIZZES[post.quizId]) {
-      QuizEngine.mount('quizMount', QUIZZES[post.quizId]);
+    const allQuizzes = getAllQuizzes();
+    if (post.quizId && allQuizzes[post.quizId]) {
+      QuizEngine.mount('quizMount', allQuizzes[post.quizId]);
     }
 
     observeFadeUps();
@@ -309,11 +322,11 @@ const App = (() => {
   }
 
   function doSearch(q, dropdown) {
-    const results = POSTS.filter(p =>
-      p.title.toLowerCase().includes(q) ||
-      p.subtitle.toLowerCase().includes(q) ||
-      p.tags.some(t => t.includes(q)) ||
-      p.category.toLowerCase().includes(q)
+    const results = getAllPosts().filter(p =>
+      p.title?.toLowerCase().includes(q) ||
+      (p.subtitle || p.excerpt || '').toLowerCase().includes(q) ||
+      (p.tags || []).some(t => t.includes(q)) ||
+      (p.category || '').toLowerCase().includes(q)
     ).slice(0, 6);
 
     // Also search glossary
@@ -328,7 +341,7 @@ const App = (() => {
       dropdown.innerHTML =
         results.map(p => `
           <a class="search-result-item" href="post.html#${p.id}">
-            <span class="search-result-icon">${p.heroIcon}</span>
+            <span class="search-result-icon" style="display:flex;align-items:center;justify-content:center;background:${p.heroColor || 'var(--primary)'};border-radius:8px;width:36px;height:36px;flex-shrink:0;padding:7px;box-sizing:border-box">${p.heroIcon}</span>
             <div class="search-result-info">
               <h4>${highlight(p.title, q)}</h4>
               <p>${p.category} · ${p.readTime} read</p>
@@ -336,7 +349,7 @@ const App = (() => {
           </a>`).join('') +
         glossResults.map(g => `
           <a class="search-result-item" href="glossary.html#${g.term}">
-            <span class="search-result-icon">📖</span>
+            <span class="search-result-icon" style="display:flex;align-items:center;justify-content:center;background:var(--primary);border-radius:8px;width:36px;height:36px;flex-shrink:0;padding:8px;box-sizing:border-box"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></span>
             <div class="search-result-info">
               <h4>${highlight(g.term, q)}</h4>
               <p>Glossary · ${g.category}</p>
@@ -400,7 +413,7 @@ const App = (() => {
       e.preventDefault();
       const email = form.querySelector('input[type=email]').value;
       if (email) {
-        toast(`🎉 You're subscribed! Daily doses coming to ${email}`, 'success', 4000);
+        toast(`You're subscribed! Daily doses coming to ${email}`, 'success', 4000);
         form.reset();
       }
     });
@@ -430,7 +443,7 @@ const App = (() => {
     if (page === 'resources'){ Resources.render(); }
   }
 
-  return { init, renderPostGrid, setFilter, openPost, handleBookmark, share, copyLink, observeFadeUps, formatDate };
+  return { init, renderPostGrid, setFilter, openPost, handleBookmark, share, copyLink, observeFadeUps, formatDate, getAllPosts, getAllQuizzes };
 })();
 
 // ─────────────────────────────────────────────
@@ -441,23 +454,25 @@ const QuizHub = (() => {
     const grid = document.getElementById('quizHubGrid');
     if (!grid) return;
 
-    const scores = JSON.parse(localStorage.getItem('healyis_quiz_scores') || '{}');
+    const scores    = JSON.parse(localStorage.getItem('healyis_quiz_scores') || '{}');
+    const allPosts  = App.getAllPosts ? App.getAllPosts() : POSTS;
+    const allQuizzes = App.getAllQuizzes ? App.getAllQuizzes() : QUIZZES;
 
-    grid.innerHTML = Object.entries(QUIZZES).map(([id, quiz]) => {
-      const post  = POSTS.find(p => p.id === quiz.postId);
+    grid.innerHTML = Object.entries(allQuizzes).map(([id, quiz]) => {
+      const post  = allPosts.find(p => p.id === quiz.postId);
       const score = scores[id];
       const hasScore = score !== undefined;
       return `
         <div class="quiz-hub-card fade-up" onclick="QuizHub.openModal('${id}')">
-          <div class="quiz-card-icon" style="background:${post?.heroColor || 'var(--bg)'}">
-            ${post?.heroIcon || '❓'}
+          <div class="quiz-card-icon" style="background:${post?.heroColor || 'var(--primary)'}">
+            ${post?.heroIcon || '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'}
           </div>
           <span class="tag ${(post?.category || 'general').toLowerCase().replace(' ','')}" style="margin-bottom:12px;width:fit-content">${post?.category || 'General'}</span>
           <h3>${quiz.title}</h3>
           <p>${quiz.description}</p>
           <div class="quiz-card-footer">
             <span class="quiz-score-badge ${hasScore ? 'has-score' : ''}">
-              ${hasScore ? `✅ Best: ${score}/${quiz.questions.length}` : `${quiz.questions.length} Questions`}
+              ${hasScore ? `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg>Best: ${score}/${quiz.questions.length}` : `${quiz.questions.length} Questions`}
             </span>
             <button class="btn btn-primary btn-sm">${hasScore ? 'Retake' : 'Start Quiz'}</button>
           </div>
@@ -468,7 +483,8 @@ const QuizHub = (() => {
   }
 
   function openModal(quizId) {
-    const quiz = QUIZZES[quizId];
+    const allQuizzes = App.getAllQuizzes ? App.getAllQuizzes() : QUIZZES;
+    const quiz = allQuizzes[quizId];
     if (!quiz) return;
     const overlay = document.getElementById('quizModal');
     const title   = document.getElementById('quizModalTitle');
