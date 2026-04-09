@@ -105,6 +105,18 @@
 
         <div class="admin-card">
           <div class="admin-card-header">
+            <h3>Recent Quizzes</h3>
+            <button class="btn btn-sm btn-outline" onclick="Admin.showPanel('quizzes')">View all</button>
+          </div>
+          <div id="recentQuizzesList" class="recent-list">
+            <p style="color:var(--text-muted)">Loading…</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="admin-card" style="margin-top:20px">
+          <div class="admin-card-header">
             <h3>Quick Actions</h3>
           </div>
           <div style="display:grid;gap:10px">
@@ -138,7 +150,6 @@
             </a>
           </div>
         </div>
-      </div>
     </div>
 
     <!-- ══════════════════════════════════════
@@ -184,12 +195,14 @@
             <thead>
               <tr>
                 <th>Title</th>
+                <th>Description</th>
+                <th>Linked Post</th>
                 <th>Questions</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="quizzesTableBody">
-              <tr><td colspan="3" style="text-align:center;color:var(--text-muted)">Loading…</td></tr>
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Loading…</td></tr>
             </tbody>
           </table>
         </div>
@@ -266,14 +279,10 @@
             <input class="form-input" type="text" id="postEditorTags" placeholder="diabetes, insulin, metabolism" />
           </div>
           <div class="form-group">
-            <label class="form-label">Hero Icon (emoji)</label>
-            <input class="form-input" type="text" id="postEditorIcon" placeholder="📄" maxlength="4" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Hero Colour</label>
+            <label class="form-label">Hero Colour <span style="font-size:.75rem;color:var(--text-muted)">(optional override)</span></label>
             <div style="display:flex;gap:8px;align-items:center">
               <input type="color" id="postEditorColor" value="#0d4f6c" style="width:44px;height:38px;border:none;border-radius:var(--radius);cursor:pointer;padding:2px" />
-              <span style="font-size:.8rem;color:var(--text-muted)">Card accent colour</span>
+              <span style="font-size:.8rem;color:var(--text-muted)">Card accent colour — auto-set by category</span>
             </div>
           </div>
         </div>
@@ -311,9 +320,15 @@
             <input class="form-input" type="text" id="quizEditorTitle" placeholder="e.g. Diabetes Knowledge Check" required />
           </div>
           <div class="form-group">
-            <label class="form-label">Linked Post ID <span style="font-size:.75rem;color:var(--text-muted)">(optional)</span></label>
-            <input class="form-input" type="text" id="quizEditorPostId" placeholder="e.g. custom-1234567890" />
+            <label class="form-label">Linked Post <span style="font-size:.75rem;color:var(--text-muted)">(optional)</span></label>
+            <select class="form-input" id="quizEditorPostId">
+              <option value="">— None —</option>
+            </select>
           </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description <span style="font-size:.75rem;color:var(--text-muted)">(shown in quiz cards)</span></label>
+          <textarea class="form-input" id="quizEditorDescription" rows="2" placeholder="A brief description of what this quiz covers…"></textarea>
         </div>
 
         <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px">

@@ -10,13 +10,26 @@ const App = (() => {
 
   // ── Merge custom posts & quizzes from Admin ─
   function getAllPosts() {
-    const custom = JSON.parse(localStorage.getItem('healyis_custom_posts') || '[]');
-    return [...custom, ...POSTS];
+    const custom    = JSON.parse(localStorage.getItem('healyis_custom_posts')   || '[]');
+    const overrides = JSON.parse(localStorage.getItem('healyis_post_overrides') || '{}');
+    const customIds = new Set(custom.map(p => p.id));
+    const builtin   = (typeof POSTS !== 'undefined' ? POSTS : [])
+      .filter(p => !customIds.has(p.id))
+      .map(p => overrides[p.id] ? { ...p, ...overrides[p.id] } : p);
+    return [...custom, ...builtin];
   }
 
   function getAllQuizzes() {
-    const custom = JSON.parse(localStorage.getItem('healyis_custom_quizzes') || '[]');
-    const merged = { ...QUIZZES };
+    const custom    = JSON.parse(localStorage.getItem('healyis_custom_quizzes')  || '[]');
+    const overrides = JSON.parse(localStorage.getItem('healyis_quiz_overrides')  || '{}');
+    const merged    = {};
+    // Apply overrides to built-in quizzes
+    if (typeof QUIZZES !== 'undefined') {
+      Object.entries(QUIZZES).forEach(([id, q]) => {
+        merged[id] = overrides[id] ? { ...q, ...overrides[id] } : q;
+      });
+    }
+    // Custom quizzes override any built-in with same id
     custom.forEach(q => { merged[q.id] = q; });
     return merged;
   }

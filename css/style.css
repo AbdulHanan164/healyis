@@ -555,6 +555,7 @@ p{margin-bottom:1rem}
 .footer-disclaimer svg{flex-shrink:0;margin-top:1px;opacity:.7}
 .feature-icon-wrap{width:48px;height:48px;border-radius:14px;background:color-mix(in srgb,var(--c,var(--primary)) 12%,transparent);display:flex;align-items:center;justify-content:center;color:var(--c,var(--primary))}
 .feature-icon-wrap svg{width:22px;height:22px}
+.step-num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.25rem;font-weight:700;line-height:1}
 .footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;font-size:.8rem;flex-wrap:wrap;gap:14px}
 
 /* ── Features strip ── */
