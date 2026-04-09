@@ -76,7 +76,7 @@ p{margin-bottom:1rem}
 .icon-btn:hover{background:var(--primary);color:#fff;transform:scale(1.08)}
 
 /* ── Navigation ── */
-.navbar{position:sticky;top:0;z-index:1000;height:var(--nav-h);display:flex;align-items:center;transition:all var(--t) var(--ease)}
+.navbar{position:sticky;top:0;z-index:1000;height:var(--nav-h);display:flex;align-items:center;transition:background .3s ease,box-shadow .3s ease,border-color .3s ease;background:var(--primary)}
 .navbar.solid{background:var(--primary)}
 .navbar.scrolled{background:rgba(255,255,255,.88);backdrop-filter:blur(20px) saturate(1.8);border-bottom:1px solid var(--border);box-shadow:0 4px 24px rgba(13,79,108,.08)}
 .nav-inner{display:flex;align-items:center;gap:8px;width:100%}
