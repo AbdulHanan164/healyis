@@ -8,30 +8,45 @@ const App = (() => {
   let bookmarks = JSON.parse(localStorage.getItem('healyis_bookmarks') || '[]');
   let searchTimeout = null;
 
-  // ── Merge custom posts & quizzes from Admin ─
+  // ── Memoized data access ─────────────────────
+  // Cache is busted when localStorage changes (e.g. after admin edits)
+  let _postsCache   = null;
+  let _quizzesCache = null;
+
+  function bustCache() { _postsCache = null; _quizzesCache = null; }
+
+  // Invalidate on storage events (admin edits in another tab)
+  window.addEventListener('storage', (e) => {
+    if (e.key && (e.key.startsWith('healyis_custom') || e.key.startsWith('healyis_post') || e.key.startsWith('healyis_quiz'))) {
+      bustCache();
+    }
+  });
+
   function getAllPosts() {
+    if (_postsCache) return _postsCache;
     const custom    = JSON.parse(localStorage.getItem('healyis_custom_posts')   || '[]');
     const overrides = JSON.parse(localStorage.getItem('healyis_post_overrides') || '{}');
     const customIds = new Set(custom.map(p => p.id));
     const builtin   = (typeof POSTS !== 'undefined' ? POSTS : [])
       .filter(p => !customIds.has(p.id))
       .map(p => overrides[p.id] ? { ...p, ...overrides[p.id] } : p);
-    return [...custom, ...builtin];
+    _postsCache = [...custom, ...builtin];
+    return _postsCache;
   }
 
   function getAllQuizzes() {
+    if (_quizzesCache) return _quizzesCache;
     const custom    = JSON.parse(localStorage.getItem('healyis_custom_quizzes')  || '[]');
     const overrides = JSON.parse(localStorage.getItem('healyis_quiz_overrides')  || '{}');
     const merged    = {};
-    // Apply overrides to built-in quizzes
     if (typeof QUIZZES !== 'undefined') {
       Object.entries(QUIZZES).forEach(([id, q]) => {
         merged[id] = overrides[id] ? { ...q, ...overrides[id] } : q;
       });
     }
-    // Custom quizzes override any built-in with same id
     custom.forEach(q => { merged[q.id] = q; });
-    return merged;
+    _quizzesCache = merged;
+    return _quizzesCache;
   }
 
   // ── Toast Notifications ─────────────────────
@@ -440,20 +455,28 @@ const App = (() => {
   // ── Public API ────────────────────────────────
   function handleBookmark(postId, btn) { toggleBookmark(postId, btn); }
 
-  function init() {
-    initSearch();
-    initMobileNav();
-    initNewsletter();
-    updateAllBookmarkButtons();
-    observeFadeUps();
+  // requestIdleCallback shim for Safari
+  const rIC = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
 
-    // Page-specific init
+  function init() {
     const page = document.body.dataset.page;
+
+    // ── Critical: render visible content first ──
     if (page === 'home')     { initFilters(); renderPostGrid(); }
     if (page === 'post')     { renderPost(); }
     if (page === 'quiz-hub') { QuizHub.render(); }
     if (page === 'glossary') { Glossary.render(); }
     if (page === 'resources'){ Resources.render(); }
+
+    // ── Non-critical: defer until browser is idle ──
+    rIC(() => {
+      initSearch();
+      initMobileNav();
+      initNewsletter();
+      updateAllBookmarkButtons();
+      observeFadeUps();
+      Auth.renderNavAuth();
+    });
   }
 
   return { init, renderPostGrid, setFilter, openPost, handleBookmark, share, copyLink, observeFadeUps, formatDate, getAllPosts, getAllQuizzes };
